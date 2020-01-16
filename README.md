@@ -5,3 +5,7 @@
 Simply run it, give it the Switches IP, user and password and sit back.</p>
 <p class="has-line-data" data-line-start="9" data-line-end="11">If you have any questions feel free to email me at <a href="mailto:chs@ip4.de">chs@ip4.de</a><br>
 This is my first time programming in python - be gentle ;)</p>
+</p>Simply upload all files in the "configuration", "core-dump", "logfiles" and "rsi" folder to JTAC.
+</p>&nbsp;
+</p>Do NOT upload the njsupport-live.log - this is for your Info only in case something in the script goes wrong.
+</p>JTAC will probably not know what to do with that file because it contains almost nothing about your Device ;)
