@@ -11,13 +11,14 @@ import sys
 import getpass
 import logging
 import os
+import shutil
 from scp import SCPClient
 from datetime import datetime
 
 hostname_arg = input("Please enter the Hostname or IP of your target Device: ")
 username_arg = input("Please Enter a Username (not root): ")
 password_arg = getpass.getpass()
-version_arg = "2020.01.17.05"
+version_arg = "2020.01.17.19"
 now = datetime.now()
 dir_config = 'configuration'
 dir_rsi = 'rsi'
@@ -27,11 +28,12 @@ dir_root = 'upload'
 date_arg = now.strftime("%Y-%m-%d_%H-%M-%S")
 
 # Set up logging
-log = "njsupport-live.log"
+log = "njs.log"
 logging.basicConfig(filename=log, level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
 
 if str(username_arg) == 'root':
-    sys.exit('Unfortunately the user root is currently not supported - Please run the tool again and choose another user.')
+    sys.exit(
+        'Unfortunately the user root is currently not supported - Please run the tool again and choose another user.')
 
 buff = ''
 resp = ''
@@ -47,8 +49,11 @@ print("#                                                                        
 print("#      After the Program is finished, it will automatically close itself.     #")
 print("#                                                                             #")
 print("###############################################################################")
-print("START: [Script started]")
-logging.info('START: [Script started]')
+print("\n")
+print("\n")
+print("\n")
+print("Script is starting...")
+logging.info('Script is starting...')
 time.sleep(2)
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -61,46 +66,45 @@ logging.info('Trying to create necessary folders')
 
 if not os.path.exists(dir_root + '-' + hostname_arg + '-' + date_arg):
     os.mkdir(dir_root + '-' + hostname_arg + '-' + date_arg)
-    logging.info('Info: root directory created succesfully')
+    logging.info('Info: root directory created successfully')
 else:
     logging.info('Info: root directory already existed!')
 
 if not os.path.exists(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_config):
     os.mkdir(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_config)
-    logging.info('Info: directory for configuration-files created succesfully')
+    logging.info('Info: directory for configuration-files created successfully')
 else:
     logging.info('Info: directory for configuration-files already existed!')
 
 if not os.path.exists(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_rsi):
     os.mkdir(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_rsi)
-    logging.info('Info: directory for rsi-files created succesfully')
+    logging.info('Info: directory for rsi-files created successfully')
 else:
     logging.info('Info: directory for rsi-files already existed!')
 
 if not os.path.exists(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_core):
     os.mkdir(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_core)
-    logging.info('Info: directory for core-dumps created succesfully')
+    logging.info('Info: directory for core-dumps created successfully')
 else:
     logging.info('Info: directory for core-dumps already existed!')
 
 if not os.path.exists(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_logfiles):
     os.mkdir(dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_logfiles)
-    logging.info('Info: directory for logfiles created succesfully')
+    logging.info('Info: directory for logfiles created successfully')
 else:
     logging.info('Info: directory for logfiles already existed!')
 
 # Saving the config
 print("\n")
 print("Step 1/5: Saving the active configuration in set-format (including secrets)")
-logging.info('Step1/5: Saving the active configuration in set-format (inclusind secrets)')
+logging.info('Step1/5: Saving the active configuration in set-format (including secrets)')
 stdin, stdout, stderr = ssh.exec_command(
     'show configuration | display set | no-more | save /var/tmp/active-config-' + date_arg + '.txt\n')
 exit_status = stdout.channel.recv_exit_status()
 if exit_status == 0:
-    logging.info('Info: Configuration saved succesfully.')
+    logging.info('Info: Configuration saved successfully.')
 else:
     logging.info('Error: Could not save configuration.')
-time.sleep(2)
 
 # Creating the RSI (save to file) and wait for it to complete
 # See https://www.juniper.net/documentation/en_US/junos/topics/reference/command-summary/request-support-information.html
@@ -111,10 +115,9 @@ logging.info('Step 2/5: Creating the RSI')
 stdin, stdout, stderr = ssh.exec_command('request support information | save /var/tmp/rsi-' + date_arg + '.txt\n')
 exit_status = stdout.channel.recv_exit_status()
 if exit_status == 0:
-    logging.info('Info: RSI created succesfully.')
+    logging.info('Info: RSI created successfully.')
 else:
-    logging.info('Error: Could not create RSI. Please check the Device manually.')
-time.sleep(2)
+    logging.info('Error: Could not create RSI. Please check the device manually.')
 
 # Compressing the Logfiles
 # See https://www.juniper.net/documentation/en_US/junos/topics/task/troubleshooting/troubleshooting-logs-compressing.html
@@ -125,10 +128,9 @@ stdin, stdout, stderr = ssh.exec_command(
     'file archive compress source /var/log/* destination /var/tmp/logfiles-' + date_arg + '.tgz\n')
 exit_status = stdout.channel.recv_exit_status()
 if exit_status == 0:
-    logging.info('Info: Logfiles compressed succesfully.')
+    logging.info('Info: Logfiles compressed successfully.')
 else:
-    logging.info('Error: Logfiles not compresses succesfully. Check Device manually.')
-time.sleep(2)
+    logging.info('Error: Logfiles not compresses successfully. Check Device manually.')
 
 # Now downloading all the files created on the device via scp
 print("\n")
@@ -141,7 +143,7 @@ try:
         scp.get(remote_path='/var/tmp/rsi-' + date_arg + '.txt',
                 local_path='./' + dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_rsi + '/')
 except:
-    logging.info('Error: Could not fetch RSI - something went wrong. Horribly...')
+    logging.info('Error: Could not fetch RSI - something went wrong...')
     scp.close()
 finally:
     logging.info('Info: RSI successfully fetched.')
@@ -153,7 +155,7 @@ try:
         scp.get(remote_path='/var/tmp/logfiles-' + date_arg + '.tgz',
                 local_path='./' + dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_logfiles + '/')
 except:
-    logging.info('Error: Could not fetch Logfiles - something went wrong. Horribly...')
+    logging.info('Error: Could not fetch Logfiles - something went wrong...')
     scp.close()
 finally:
     logging.info('Info: Logfiles successfully fetched.')
@@ -165,22 +167,22 @@ try:
         scp.get(remote_path='/var/tmp/active-config-' + date_arg + '.txt',
                 local_path='./' + dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_config + '/')
 except:
-    logging.info('Error: Could not fetch active Configuration - something went wrong. Horribly...')
+    logging.info('Error: Could not fetch active Configuration - something went wrong...')
     scp.close()
 finally:
-    logging.info('Info: Configuration succesfully fetched.')
+    logging.info('Info: Configuration successfully fetched.')
     scp.close()
 
-logging.info('Info: Now fetching the Coredumps...')
+logging.info('Info: Now fetching the crash-dumps (core-dumps) if they exist...')
 try:
     with SCPClient(ssh.get_transport(), sanitize=lambda x: x) as scp:
-        scp.get(remote_path='/var/crash/*', 
-				local_path='./' + dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_core + '/')
+        scp.get(remote_path='/var/crash/*',
+                local_path='./' + dir_root + '-' + hostname_arg + '-' + date_arg + '/' + dir_core + '/')
 except:
-    logging.info('Info: No Coredumps found.')
+    logging.info('Info: No crash-dumps (core-dumps) found - this is a good sign.')
     scp.close()
 finally:
-    logging.info('Warning: Coredumps found and transfered...')
+    logging.info('Warning: crash-dumps (core-dumps) found and transferred...')
     scp.close()
 
 # Deleting our files on the switch so we don't exhaust all the space on it
@@ -198,13 +200,15 @@ time.sleep(2)
 logging.info('Info: Deleting /var/tmp/active-config-' + date_arg + '.txt')
 channel.send('file delete /var/tmp/active-config-' + date_arg + '.txt\n')
 logging.info('Info: File deleted successfully.')
-time.sleep(2)
 resp = channel.recv(9999)
 output = resp.decode().split(',')
 # print(''.join(output)) #commented out so its not shown on the console (debug)
-time.sleep(2)
+time.sleep(1)
 ssh.close()
 time.sleep(1)
+
+shutil.make_archive('njs-package_' + hostname_arg + '_' + date_arg, 'zip', dir_root + '-' + hostname_arg + '-' + date_arg)
+
 print("\n")
-print("FINISH: [Script ended]")
-logging.info('FINISH: [Script ended]')
+print("Finishing the script...")
+logging.info('Finishing the script...')
