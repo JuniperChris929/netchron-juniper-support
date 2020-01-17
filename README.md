@@ -1,4 +1,4 @@
-<p class="has-line-data" data-line-start="0" data-line-end="1">This script helps you to collect all the needed informations for JTAC.</p>
+<br> Netchron-Juniper-Supporttool (or NJS for short) is a script that helps you to collect all the needed informations for JTAC.</p>
 <p class="has-line-data" data-line-start="2" data-line-end="3">I was tired of remembering the needed commands (and probably forgetting some) and the manual time it took me to collect all the Infos.</p>
 <p class="has-line-data" data-line-start="4" data-line-end="6">Run this script in python (if you don't trust my .exe) or use the compiled .exe (created via pyinstaller).<br>
 The .exe is useful when you don’t have python on your (or your customers) machine.</p>
