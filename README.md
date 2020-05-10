@@ -9,7 +9,29 @@ This is my first time programming in python - be gentle ;)</p>
 <p class="has-line-data" data-line-start="14" data-line-end="15">Do NOT upload the njsupport-live.log - this is for your Info only in case something in the script goes wrong.JTAC will probably not know what to do with that file because it contains almost nothing about your Device ;)</p>
 <br>Disclaimer: This Tool is for free use on your own risk. I'm not employed by Juniper - just trying to automate my Tasks ;)
 <br>
-<br>Currently working on single-devices only (tested on SRX and EX).
+<br>Currently working on single-devices only (tested on SRX, QFX and EX).
+<br>
 <br>For Chassis-Cluster or Virtual-Chassis you need additional commands and that would require some more "discover" tasks to select the correct command for each device-group - but this will definitely be added in the future
 <br>Also only working as "non-root" since root is not connected to the cli but the shell which would require an additional command - will also be added in the future.
 <br>If you are missing something or have an idea please let me know.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br> Netchron-Juniper-Updater (or NJU for short) is an ALPHA-script (work in progress) that helps you to update your Device.</p>
+<p class="has-line-data" data-line-start="2" data-line-end="3">It will fetch the Logs before the update, clean the device and then upload the image to the device and update it.</p>
+<p class="has-line-data" data-line-start="4" data-line-end="6">When the Device is back up it will also create a snapshot for the new version.<br>
+<br>
+<br>Currently working and tested on single-devices only (tested on SRX).
+<br>
+<br>
+<br>
