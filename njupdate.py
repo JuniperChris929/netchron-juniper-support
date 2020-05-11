@@ -18,10 +18,11 @@ software_arg = input("Please enter the Filename of your Software: ")
 hostname_arg = input("Please enter the Hostname or IP of your target Device: ")
 username_arg = input("Please Enter a Username (not root): ")
 password_arg = getpass.getpass()
+port_arg = input("Please Enter the destination ssh port (Default 22): ") or "22"
 version_arg = "2020.05.10.20"
 now = datetime.now()
 dir_sw = 'software'
-dir_logfiles = 'logfiles'
+dir_logfiles = 'logfiles-before-update'
 dir_root = 'update'
 date_arg = now.strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -57,7 +58,7 @@ logging.info('Script is starting...')
 time.sleep(2)
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect(hostname_arg, username=username_arg, password=password_arg)
+ssh.connect(hostname_arg, username=username_arg, password=password_arg, port=port_arg)
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 channel = ssh.invoke_shell()
 
@@ -113,7 +114,16 @@ finally:
 
 # STEP3: Cleanup - NEED TO CHECK HOW TO SAY YES ON CLI
 print("\n")
-print("Step 3: Cleaning the Storage")
+print("Step 3: Cleaning the Device")
+logging.info('Step 3: Cleaning the Device')
+
+stdin, stdout, stderr = ssh.exec_command('request system storage cleanup no-confirm\n')
+exit_status = stdout.channel.recv_exit_status()
+if exit_status == 0:
+    logging.info('Info: Device cleaned successfully.')
+else:
+    logging.info('Error: Could not clean the Device. Please check the device manually.')
+
 
 print("\n")
 print("Step 4: Uploading Software to Device")
@@ -133,7 +143,7 @@ finally:
 print("\n")
 print("Step 5: Adding new software and reboot")
 logging.info('Step 5: Adding new software and reboot')
-logging.info('Info: request system software add no-validate no-copy unlink reboot /var/tmp/' + software_arg + '\n')
+logging.info('Info: sending command:  request system software add no-validate no-copy unlink reboot /var/tmp/' + software_arg + '\n')
 channel.send('request system software add no-validate no-copy unlink reboot /var/tmp/' + software_arg + '\n')
 logging.info('Info: Command sent - let us pray to the lord now and hope it gets back...')
 time.sleep(1)
