@@ -15,23 +15,3 @@ This is my first time programming in python - be gentle ;)</p>
 <br>Also only working as "non-root" since root is not connected to the cli but the shell which would require an additional command - will also be added in the future.
 <br>If you are missing something or have an idea please let me know.
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br> Netchron-Juniper-Updater (or NJU for short) is an ALPHA-script (work in progress) that helps you to update your Device.</p>
-<p class="has-line-data" data-line-start="2" data-line-end="3">It will fetch the Logs before the update, clean the device and then upload the image to the device and update it.</p>
-<p class="has-line-data" data-line-start="4" data-line-end="6">When the Device is back up it will also create a snapshot for the new version.<br>
-<br>
-<br>Currently working and tested on single-devices only (tested on SRX).
-<br>
-<br>
-<br>
