@@ -1,9 +1,8 @@
-# Developed by Christian Scholz [Mail: chs@ip4.de, Twitter: @chsjuniper]
-# Feel free to use and modify this script as needed
-# Use at your own risk
-# This is a hobby project - I'm currently not employed by Juniper
+# Developed by Christian Scholz [Mail: chs@ip4.de, Mastodon: @chsjuniper@mastodon.social, Twitter: @chsjuniper]
+# Feel free to use and modify this script as needed but use at your own risk!
+# This is a hobby project - I'm not employed by Juniper.
 # I just wanted a tool that helps me doing my every day work a bit faster and more consistent
-# Also I'm new to python so this code can possibly be optimized to do more in less lines ;)
+# You've been warned ;)
 
 import os
 import sys
@@ -18,10 +17,10 @@ from jnpr.junos import Device
 from datetime import datetime
 from jnpr.junos.utils.start_shell import StartShell
 
-varIP = input("Please enter the Hostname or IP of your target Device: ")
-varUser = input("Please Enter a Username (not root): ")
+varIP = input("Please enter the hostname or IP of your target device: ")
+varUser = input("Please enter a username (not root): ")
 varPassword = getpass.getpass()
-version_arg = "2021.02.09.7225"
+version_arg = "2023.09.21.9773"
 now = datetime.now()
 dir_config = 'configuration'
 dir_rsi = 'rsi'
@@ -33,12 +32,12 @@ date_arg = now.strftime("%Y-%m-%d_%H-%M-%S")
 # pyinstaller -F -i Icon.ico -n Output-Filename script-source.py
 
 # Set up logging
-log = "njs.log"
+log = "njs_" + date_arg + ".log"
 logging.basicConfig(filename=log, level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
 
 if str(varUser) == 'root':
     sys.exit(
-        'Unfortunately the user root is currently not supported - Please run the tool again and choose another user.')
+        'Which part of NOT root did you not understand? - Please run the tool again and choose another user.')
 
 while True:
     try:
@@ -60,9 +59,9 @@ print("#########################################################################
 print("#                          Version:", version_arg, "                          #")
 print("#    This script will run all necessary troubleshooting commands for you.     #")
 print("#                                                                             #")
-print("#            WARNING: Please leave this Window open and running.              #")
+print("#            WARNING: Please leave this window open and running.              #")
 print("#                                                                             #")
-print("#      After the Program is finished, it will automatically close itself.     #")
+print("#      After the program is finished, it will automatically close itself.     #")
 print("#                                                                             #")
 print("###############################################################################")
 print("\n")
